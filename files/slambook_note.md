@@ -156,3 +156,46 @@
 - **优化**方法：以图优化为代表的，当前主流
 
 ## 2.4 编程实践
+
+C++文件的编译方式：
+
+1. 使用g++命令行编译：
+
+   ​		不适用于大规模程序的类丰富、依赖关系复杂的情况。
+
+2. 使用cmake编译：
+
+   - 先执行 `cmake` 处理了工程文件之间的关系，再执行 `make` 实际调用了 `g++` 来编译程序，将一串g++命令变成了维护若干个比较直观的`CMakeLists.txt`文件。
+
+   - 最简单形式：最小版本，工程名，生成可执行文件
+
+     ```cmake
+     cmake_minimum_required(VERSION 2.8)
+     project(HelloSLAM)
+     add_executable(helloSLAM helloSLAM.cpp)
+     ```
+
+   - 引用库：生成库，生成可执行文件，链接库
+
+     Linux中的库文件有静态库和共享库两种，静态库每次被调用都生成一个副本，而共享库只有一个副本，更节省空间。
+
+     ```cmake
+     # 创建静态库，生成文件后缀为.a
+     add_library(hello libHelloSLAM.cpp)   # 生成 libhello.a
+     # 创建共享库，生成文件后缀为.so
+     add_library(hello_shared SHARED libHelloSLAM.cpp)  # 生成 libhello_shared.so
+     
+     add_executable(useHello useHello.cpp)
+     target_link_libraries(useHello hello)
+     ## target_link_libraries(useHello hello_shared)
+     ```
+
+
+
+## 习题
+
+1. 阅读文献[1]和[14]，你能看懂其中的内容么？
+2. 阅读SLAM的综述文献，例如[9，15-18]等。这些文献中关于SLAM的看法与本书有何异同？
+3. g++命令有哪些参数？怎么填写参数可以更改生成的程序文件名字？
+4. 
+
