@@ -199,3 +199,50 @@ C++文件的编译方式：
 3. g++命令有哪些参数？怎么填写参数可以更改生成的程序文件名字？
 4. 
 
+# 第3讲 三维空间刚体运动
+
+- 理解三维空间的刚体运动描述方式：**旋转矩阵**、**变换矩阵**、**四元数**和**欧拉角**。
+- 掌握**Eigen库**的矩阵、几何模块的使用方法。
+
+两个向量 $a$ 和 $b$ 的内积和外积运算：
+$$
+a{\cdot}b=a^Tb=\sum^3_{i=1}a_ib_i=|a||b|cos\langle a,b\rangle
+$$
+
+$$
+a\times b=\begin{vmatrix}\begin{vmatrix}e_1&e_2&e_3\\a_1&a_2&a_3\\b_1&b_2&b_3\end{vmatrix}\end{vmatrix}
+=\begin{bmatrix}a_2b_3-a_3b_2\\a_3b_1-a_1b_3\\a_1b_2-a_2b_1\end{bmatrix}
+=\begin{bmatrix}0&-a_3&a_2\\a_3&0&-a_1\\-a_2&a_1&0\end{bmatrix}b
+=a^{\wedge}b
+$$
+
+其中**反对称矩阵（Skew-symmetrix Matrix）**的符号定义为：
+$$
+a^{\wedge}=\begin{bmatrix}0&-a_3&a_2\\a_3&0&-a_1\\-a_2&a_1&0\end{bmatrix}
+$$
+将刚体从局部坐标系转换到世界坐标系，经历了一个**欧式变换（Euclidean Transform）**，它由旋转和平移组成。
+
+首先考虑**旋转**，**旋转矩阵（Rotation Matrix）**各分量是两个坐标系基的内积，因此也叫**方向余弦矩阵（Direction Cosine Matrix）**，定义同一向量在两个坐标系下的坐标分别为 $a$ 和 $a'$ 。
+$$
+\begin{bmatrix}a_1\\a_2\\a_3\end{bmatrix}
+= \begin{bmatrix}e_1^Te_1'&e_1^Te_2'&e_1^Te_3'\\e_2^Te_1'&e_2^Te_2'&e_2^Te_3'\\e_3^Te_1'&e_3^Te_2'&e_3^Te_3'\end{bmatrix}\begin{bmatrix}a_1'\\a_2'\\a_3'\end{bmatrix}
+\equiv Ra'
+$$
+旋转矩阵具有一些特别的性质，如：它是行列式为1的正交矩阵（逆为自身转置）。$n$ 维旋转矩阵的集合定义如下，为**特殊正交群（Special Orthogonal Group）**：
+$$
+\ce{SO}(n)=\{R\in \mathbb {R}^{n\times n}\vert RR^T =I,\ce{det}(R)=1\}
+$$
+定义坐标系1、坐标系2，向量 $a$ 在两坐标系下的坐标为 $a_1$，$a_2$，它们之间的关系是：
+$$
+a_1=R_{12}a_2+t_{12}
+$$
+其中，$R_{12}$ 表示`把坐标系2的向量变换到坐标系1中`（乘在向量左边，所以从右往左读），$t_{12}$ 表示`从1到2的向量` 或 `2在1中的表示`。
+
+可以将**旋转和平移变换合并**到一个齐次变换 $T$ 中，即**变换矩阵（Transform Matrix）**，其左上角为旋转矩阵，右上角为平移向量，左下角为 $0$ 向量，右下角为1，又称为**特殊欧式群（Special Euclidean Group）**：
+$$
+\ce{SE}(n)=\{T=\left[\matrix{R&t\\0^T&1}\right]\in \mathbb {R}^{4\times 4}\vert R\in \ce{SO}(3),t\in \mathbb {R}^3\}
+$$
+与 $\ce{SO}(3)$ 一样，求解该矩阵的逆表示一个反向的变换：
+$$
+T^{-1}=\left[\matrix{R^T&-R^Tt\\0^T&1}\right]
+$$
