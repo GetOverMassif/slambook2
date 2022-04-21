@@ -313,23 +313,140 @@ $$
 
 ​		**四元数**是Hamilton找到的一种扩展的复数，既紧凑，也没有奇异性，缺点是不够直观、运算稍复杂些。
 $$
-q=q_0+q_1i+q_2j+q_3k=\left[s,v\right]^T
+q=q_0+q_1i+q_2j+q_3k=\left[s,{\upsilon}\right]^T
 $$
 
-- 四元数的**运算**：加法、减法、乘法、模长、共轭、逆、数乘。
+- 四元数的**运算**：
+
+  定义两个四元数
+  $$
+  q_a=s_a+x_ai+y_aj+z_ak=[s_a,{\upsilon}_a]^T\\
+  q_b=s_b+x_bi+y_bj+z_bk=[s_b,{\upsilon}_b]^T
+  $$
+
+  - 加减法：
+
+  - 乘法：
+    $$
+    \begin{align}
+    q_aq_b=&s_as_b-x_ax_b-y_ay_b-z_az_b\\
+    &+(s_ax_b+x_as_b+y_az_b-z_ay_b)i\\
+    &+(s_ay_b-x_az_b+y_as_b+z_ax_b)j\\
+    &+(s_az_b+x_ay_b-y_ax_b+z_as_b)k\\
+    =&\left[s_as_b-{\upsilon}_a^T{\upsilon}_b,s_a{\upsilon}_b+s_b{\upsilon}_a+{\upsilon}_a\times {\upsilon}_b\right]
+    \end{align}
+    $$
+
+  - 模长：$\Vert q_a\Vert=\sqrt{s_a^2+x_a^2+y_a^2+z_a^2}\ ,\Vert q_aq_b\Vert=\Vert q_a\Vert \Vert q_b\Vert$
+
+  - 共轭：四元数共轭即把虚部取成相反数。
+
+  - 逆：$q^{-1}=q^*/\Vert q\Vert^2$ ，四元数与自己的逆的乘积为实四元数1。
+
+  - 数乘：
 
 - 四元数**表示旋转**：假设三维空间点 $p=[x,y,z]\in\mathbb {R}^3$ 以及一个表示旋转的四元数 $q$ 。
   - 把三维空间点用一个虚四元数来描述：$p=[0,x,y,z]^T$
   - 旋转后的点可以表示为：$p'=qpq^{-1}$
-- 四元数到其他旋转表示的转换
-  - 定义符号 $^{+}$ 和 $^{\oplus}$ ：
-  - 四元数乘法
-  - 
 
+- **四元数到其他旋转表示**的转换
 
+  - 为描述旋转的四元数间的运算**定义符号** $^{+}$ 和 $^{\oplus}$ ：
+    $$
+    q^{+}=\left[\matrix{s&-{\upsilon}^T\\{\upsilon}&sI+{\upsilon}^{\wedge}}\right],
+    q^{\oplus}=\left[\matrix{s&-{\upsilon}^T\\{\upsilon}&sI-{\upsilon}^{\wedge}}\right]
+    $$
+
+  - 四元数**乘法**
+    $$
+    q_1^{+}q_2=\left[\matrix{s_1&-{\upsilon}_1^T\\{\upsilon}_1&s_1I+{\upsilon}_1^{\wedge}}\right]
+    \left[\matrix{s_2\\ \upsilon_2 }\right]
+    =\left[\matrix{-{\upsilon}_1^T\upsilon_2+s_1s_2\\s_1{\upsilon}_2+s_2{\upsilon}_1+{\upsilon}_1^{\wedge}{\upsilon}_2}\right]
+    =q_1q_2
+    =q_2^{\oplus}q_1
+    $$
+
+  - 考虑用四元数**对空间点进行旋转**：
+    $$
+    p'=qpq^{-1}=q^+p^+q^{-1}=q^+{(q^{-1})}^{\oplus}p\\
+    q^+{(q^{-1})}^{\oplus}=
+    \left[\matrix{s&-{\upsilon}^T\\{\upsilon}&sI+{\upsilon}^{\wedge}}\right]
+    \left[\matrix{s&{\upsilon}^T\\-{\upsilon}&sI+{\upsilon}^{\wedge}}\right]
+    =\left[\matrix{1&0\\0^T&{\upsilon}{\upsilon}^T+s^2I+2s{\upsilon}^{\wedge}+({\upsilon}^{\wedge})^2}\right]
+    $$
+
+  - **四元数 $\Rightarrow$ 旋转矩阵**：
+    $$
+    R={\upsilon}{\upsilon}^T+s^2I+2s{\upsilon}^{\wedge}+({\upsilon}^{\wedge})^2
+    $$
+
+  - **四元数 $\Rightarrow$ 轴角**：
+    $$
+    \begin{align}
+    \ce{tr}(R)
+    & =\ce{tr}({\upsilon}{\upsilon}^T+s^2I+2s{\upsilon}^{\wedge}+({\upsilon}^{\wedge})^2)\\
+    & = v_1^2+v_2^2+v_3^2+3s^2-2(v_1^2+v_2^2+v_3^2)\\
+    & = 4s^2-1
+    \end{align}
+    $$
+
+    $$
+    \theta=\ce{arccos}\frac{\ce{tr}(R-1)}{2}=\ce{arccos}(2s^2-1)\\
+    \ce{cos}\theta=2s^2-1=2\ \ce{cos}^2\frac{\theta}{2}-1\\
+    \theta=2\ \ce{arccos}s
+    $$
+
+    $$
+    \begin{align}
+    & \theta=2\ \ce{arccos}\ q_0\\
+    & \left[n_x,n_y,n_z\right]^T=\left[q_1,q_2,q_3\right]^T/\ce{sin}\frac{\theta}{2}
+    \end{align}
+    $$
 
 ## 3.5 相似、仿射、射影变换
 
+1. **相似变换**
 
+   7自由度，相较欧式变换，多了一个缩放因子 $s$ ，允许物体均匀缩放，三维相似变换的集合也叫**相似变换群**，记为 $\ce{Sim}(3)$ 。
+   $$
+   T_s=\left[\matrix{sR&t\\0^T&1}\right]
+   $$
+
+2. **仿射变换**
+
+   12自由度，将欧式变换左上角的正交矩阵换成任意一个可逆矩阵，变换后保持平行性。
+   $$
+   T_A=\left[\matrix{A&t\\0^T&1}\right]
+   $$
+
+3. **射影变换**
+
+   15自由度，保持接触平面的相交与相切关系。
+
+   从真实世界到相机照片的变换可以看成一个射影变换（可以想象观察一个原本方形的地板砖，观察结果是一个不规则的四边形）。
+   $$
+   T_A=\left[\matrix{A&t\\a^T&1}\right]
+   $$
 
 ## 3.6 实践：Eigen几何模块
+
+| 几何表示方法 | 维度 |     Eigen变量名     |
+| :----------: | :--: | :-----------------: |
+|   旋转矩阵   | 3×3  |   Eigen::Matrix3d   |
+|   旋转向量   | 3×1  |  Eigen::AngleAxisd  |
+|    欧拉角    | 3×1  |   Eigen::Vector3d   |
+|    四元数    | 4×1  | Eigen::Quaterniond  |
+| 欧式变换矩阵 | 4×4  |  Eigen::Isometry3d  |
+|   仿射变换   | 4×4  |   Eigen::Affine3d   |
+|   射影变换   | 4×4  | Eigen::Projective3d |
+
+进一步查看Eigen集合模块，可以[查看Eigen Geometry官网教程](http://eigen.tuxfamily.org/dox/group__TutorialGeometry.html)
+
+## 习题
+
+1. 验证旋转矩阵是正交矩阵
+2. 寻找罗德里格斯公式的推导过程并加以理解。
+3. 验证四元数旋转某个点后结果是一个虚四元数（实部为零），所以仍然对应到一个三维空间点，见式(3.33)。
+4. 画表总结旋转矩阵、轴角、欧拉角、四元数的转换关系。
+5. 假设有一个大的Eigen矩阵，想把它的左上角3×3的块取出来，然后赋值 $I_{3\times 3}$ 。请编写程序实现。
+6. 一般线性方程 $Ax=b$ 有哪几种做法？你能在Eigen中实现么？
