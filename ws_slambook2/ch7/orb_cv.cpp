@@ -2,7 +2,6 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include <opencv2/opencv.hpp>
 #include <chrono>
 
 using namespace std;
@@ -17,17 +16,9 @@ int main(int argc, char **argv) {
   Mat img_1 = imread(argv[1], CV_LOAD_IMAGE_COLOR);
   Mat img_2 = imread(argv[2], CV_LOAD_IMAGE_COLOR);
 
-  // cout << img_1.rows << "," << img_1.cols << endl;
-  // cout << img_2.rows << "," << img_2.cols << endl;
-  // Mat image_1_processed,image_2_processed;
-  // resize(img_1,image_1_processed,Size(img_1.cols/4,img_1.rows/4));
-  // resize(img_2,image_2_processed,Size(img_1.cols/4,img_1.rows/4));
-  // img_1 = image_1_processed;
-  // img_2 = image_2_processed;
-  
-  // Mat img_1 = cvResize(img_1_big,,interpolation=cv2.INTER_CUBIC)
+  // cout << "[row,col]=[" << img_1.rows << "," << img_1.cols << "]" << endl;
 
-  // assert(img_1.data != nullptr && img_2.data != nullptr);
+  assert(img_1.data != nullptr && img_2.data != nullptr);
 
   //-- 初始化
   std::vector<KeyPoint> keypoints_1, keypoints_2;

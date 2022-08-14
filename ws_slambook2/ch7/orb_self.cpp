@@ -38,8 +38,12 @@ void BfMatch(const vector<DescType> &desc1, const vector<DescType> &desc2, vecto
 int main(int argc, char **argv) {
 
   // load image
-  cv::Mat first_image = cv::imread(first_file, 0);
-  cv::Mat second_image = cv::imread(second_file, 0);
+  if (argc != 3) {
+    cout << "usage: orb_self img1 img2" << endl;
+    return 1;
+  }
+  cv::Mat first_image = cv::imread(argv[1], 0);
+  cv::Mat second_image = cv::imread(argv[2], 0);
   assert(first_image.data != nullptr && second_image.data != nullptr);
 
   // detect FAST keypoints1 using threshold=40
@@ -54,6 +58,7 @@ int main(int argc, char **argv) {
   vector<DescType> descriptor2;
   cv::FAST(second_image, keypoints2, 40);
   ComputeORB(second_image, keypoints2, descriptor2);
+
   chrono::steady_clock::time_point t2 = chrono::steady_clock::now();
   chrono::duration<double> time_used = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
   cout << "extract ORB cost = " << time_used.count() << " seconds. " << endl;
@@ -79,7 +84,7 @@ int main(int argc, char **argv) {
 }
 
 // -------------------------------------------------------------------------------------------------- //
-// ORB pattern
+// ORB pattern 256位二进制描述
 int ORB_pattern[256 * 4] = {
   8, -3, 9, 5/*mean (0), correlation (0)*/,
   4, 2, 7, -12/*mean (1.12461e-05), correlation (0.0437584)*/,
@@ -344,7 +349,9 @@ void ComputeORB(const cv::Mat &img, vector<cv::KeyPoint> &keypoints, vector<Desc
   const int half_patch_size = 8;
   const int half_boundary = 16;
   int bad_points = 0;
+  // 遍历特征点
   for (auto &kp: keypoints) {
+    // 判断关键点是否有足够外边界计算描述子，若没有，则剔除
     if (kp.pt.x < half_boundary || kp.pt.y < half_boundary ||
         kp.pt.x >= img.cols - half_boundary || kp.pt.y >= img.rows - half_boundary) {
       // outside
@@ -353,6 +360,7 @@ void ComputeORB(const cv::Mat &img, vector<cv::KeyPoint> &keypoints, vector<Desc
       continue;
     }
 
+    // 计算图像块的矩
     float m01 = 0, m10 = 0;
     for (int dx = -half_patch_size; dx < half_patch_size; ++dx) {
       for (int dy = -half_patch_size; dy < half_patch_size; ++dy) {
@@ -362,12 +370,12 @@ void ComputeORB(const cv::Mat &img, vector<cv::KeyPoint> &keypoints, vector<Desc
       }
     }
 
-    // angle should be arc tan(m01/m10);
+    // 计算图像矩角度 angle should be arc tan(m01/m10);
     float m_sqrt = sqrt(m01 * m01 + m10 * m10) + 1e-18; // avoid divide by zero
     float sin_theta = m01 / m_sqrt;
     float cos_theta = m10 / m_sqrt;
 
-    // compute the angle of this point
+    // 计算关键点角度 compute the angle of this point
     DescType desc(8, 0);
     for (int i = 0; i < 8; i++) {
       uint32_t d = 0;
@@ -382,7 +390,7 @@ void ComputeORB(const cv::Mat &img, vector<cv::KeyPoint> &keypoints, vector<Desc
         cv::Point2f qq = cv::Point2f(cos_theta * q.x - sin_theta * q.y, sin_theta * q.x + cos_theta * q.y)
                          + kp.pt;
         if (img.at<uchar>(pp.y, pp.x) < img.at<uchar>(qq.y, qq.x)) {
-          d |= 1 << k;
+          d |= 1 << k;   // 
         }
       }
       desc[i] = d;
